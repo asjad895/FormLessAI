@@ -160,7 +160,7 @@ def FormlessAI(obtained=obtained, i=i):
         if resa is not None:
             conf = False
             # Render the template with the model output
-            return render_template('form.html', model_output=resa['output'])
+            return render_template('form.html', model_output=resa)
         elif conf == False:
             # After small talk, check if confidence is built
             if is_confidence_built(user_input):
@@ -169,17 +169,18 @@ def FormlessAI(obtained=obtained, i=i):
                 conf = True
                 time.sleep(25)
                 res = got_confidence(key=key)
+                return render_template('form.html', model_output=res)
             else:
                 # Continue with more small talk or handle accordingly
                 time.sleep(30)
                 res = continue_small_talk(user_input=user_input)
                 # Render the template with the model output
-                return render_template('form.html', model_output=res['output'])
+                return render_template('form.html', model_output=res)
         else:
             # Increment index i to move to the next key/column
             i = i + 1
             
-            # Check if i is within bounds
+            # Check if i is within boundss
             if i <= 5:
                 key = columns[i]
             else:

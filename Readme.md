@@ -2,6 +2,8 @@
 
 FormlessAI is a project powered by LangChain, GPT, and OpenAI, designed to streamline information extraction through conversational agents.
 
+## Notes:I am getting an rate limit error when trying to use continuosly(free version) be careful when running. it will take time sometime
+
 ## Prerequisites
 
 ```
@@ -14,7 +16,7 @@ Conda env(Optional but recommended)
 Clone the repository:
 
    ```bash
-   git clone <Your_Repository_Link>
+   git clone https://github.com/asjad895/FormLessAI
    cd FormLessAI
    ```
 
@@ -31,7 +33,9 @@ python fapp.py
 ```
 
 ## Run individual agents
-uncomment corresponding usage and input to test 
+
+uncomment corresponding usage and input to test
+
 ```
 python chat.py
 ```
