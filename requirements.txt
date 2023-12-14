@@ -1,0 +1,10 @@
+numpy
+pandas
+transformers
+huggingface_hub
+torch
+streamlit
+openai
+langchain
+flask
+datetime

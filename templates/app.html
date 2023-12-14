@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="10;url=/Form">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Include jQuery from a CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+ 
+    <title>FormlessAI </title>
+    
+</head>
+<body>
+    <div class="chat-container">
+        <h2 class="chat-prompt">{{ model_output }}</h2>
+        <!-- <form id="inputForm" method="POST">
+            <div class="chat-input">
+                <input type="text" id="textInput" name="user_input" placeholder="Type your message here">
+                <button type="submit" id="submitButton">Submit</button>
+            </div>
+        </form> -->
+        <p class="chat-response"></p>
+    </div>
+    <script src="{{ url_for('static', filename='s.js') }}"></script>
+</body>
+
+</html>
