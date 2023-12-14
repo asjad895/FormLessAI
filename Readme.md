@@ -8,6 +8,7 @@ FormlessAI is a project powered by LangChain, GPT, and OpenAI, designed to strea
 
 ```
 Python 3.10
+open ai api_key
 Conda env(Optional but recommended)
 ```
 
@@ -25,6 +26,14 @@ install dependencies
 ```
 pip install -r requirements.txt
 ```
+updates api key in env.py file(create a env file)
+load here
+
+```
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+```
+
+in ```chat.py``` file
 
 ## Run application
 
