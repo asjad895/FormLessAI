@@ -21,7 +21,7 @@ open_ai_key = os.environ.get("OPENAI_API_KEY")
 app = Flask(__name__)
 #__________________________________________________________________________________________________________________________
 #Initiation Agent prompt
-input1="Write message according to your specilaity."
+input1="Write message according to your specilaity. dont include {key} words instead include any engaging words"
 #User Data Store
 #Step 4. Details to extract: Name, email, phone no, Address, Date of birth, Education.
 columns = ['DOB', 'Name', 'Email', 'Mob No', "Batchler's degree", 'Skills']
@@ -30,11 +30,6 @@ username='Demo'
 csv_file_path = f"./extracted_data/user_{username}_{current_time}_data.csv"
 df = pd.DataFrame(columns=columns)
 # df.to_csv(csv_file_path,index=False)
-#Running InitiationAgent for initiating conversation
-print("calling initiater")
-response=agent_ini.invoke({"input":input1,"chat_history": chat_history })
-chat_history.extend([HumanMessage(content=input1),AIMessage(content=response["output"]),])
-print("Going forward.....")
 #________________________________________________________________________________________________________________________________ 
 #Step 3.Design a coherent conversation flow where users will easily give the information or convince well to give their info.
 # ● If the user is hesitant then initiate small talk and later circle back to the question regarding their personal informatio
@@ -124,27 +119,32 @@ def got_confidence(key):
     res=agent_taker.invoke({"input": input_prompt,"chat_history":chat_history})
     chat_history.extend([HumanMessage(content=input_prompt),AIMessage(content=res["output"]),])
     return res["output"]
-    
+  
+#Running InitiationAgent for initiating conversation
+print("calling initiater")
+response=agent_ini.invoke({"input":input1,"chat_history": chat_history })
+chat_history.extend([HumanMessage(content=input1),AIMessage(content=response["output"]),])
+print("Going forward.....")
+print(response)  
 #_______________________________________________________________________________________________________________________
 #App Logic,url managemnet,client server mmanagment
 @app.route('/', methods=['GET'])
 def home():
     return render_template('app.html', model_output=response['output'])
 
-obtained=[]
 i=0
 @app.route('/Form', methods=['GET', 'POST'])
-def FormlessAI(obtained=obtained, i=i):
+def FormlessAI(i=i):
     # Initialize variables
     conf = True
     key = columns[i]
-    input_prompt = f"Ask information about {key} which is not yet obtained, assume obtained as empty if not provided? obtained={obtained}"
+    input_prompt = f"Ask information about {key} which is not yet obtained,in your expertise"
     
     # Invoke the agent_taker to get a response
-    res = agent_taker.invoke({"input": input_prompt, "chat_history": chat_history})
+    res1 = agent_taker.invoke({"input": input_prompt, "chat_history": chat_history})
     
     # Update chat history with user and AI messages
-    chat_history.extend([HumanMessage(content=input_prompt), AIMessage(content=res["output"]),])
+    chat_history.extend([HumanMessage(content=input_prompt), AIMessage(content=res1["output"]),])
     
     # Check if the request method is POST
     if request.method == 'POST':
@@ -203,9 +203,8 @@ def FormlessAI(obtained=obtained, i=i):
             return render_template('form.html', model_output=res['output'])
     
     # Render the template with the model output
-    return render_template('form.html', model_output=res['output'])
+    return render_template('form.html', model_output=res1['output'])
 
-print(obtained)
 print(df.head())
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
