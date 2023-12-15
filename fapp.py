@@ -1,5 +1,5 @@
-from re import T
 from flask import Flask, render_template, request,jsonify,json
+from networkx import dfs_labeled_edges
 from chat import agent_taker,chat_history,agent_ex,agent_ini,agent_conv
 from langchain.chat_models import ChatOpenAI
 import csv,time
@@ -17,6 +17,7 @@ from langchain_core.messages import AIMessage, HumanMessage
 import os
 import env
 import warnings
+#_____________________________________________________________________________________________________________________________
 open_ai_key = os.environ.get("OPENAI_API_KEY")
 app = Flask(__name__)
 #__________________________________________________________________________________________________________________________
@@ -33,7 +34,7 @@ df = pd.DataFrame(columns=columns)
 #________________________________________________________________________________________________________________________________ 
 #Step 3.Design a coherent conversation flow where users will easily give the information or convince well to give their info.
 # ● If the user is hesitant then initiate small talk and later circle back to the question regarding their personal informatio
-def analze_user_input(user_input,key):
+def analze_user_input(user_input,key,df):
     """
     Analyzes user input and decides whether to initiate small talk or proceed with information gathering
     and Extraction
@@ -48,7 +49,7 @@ def analze_user_input(user_input,key):
         return small_talk_ini
     else:
         # User is ready to share information, directly handle the information request
-        extract_information(user_input=user_input,key=key)
+        extract_information(user_input=user_input,key=key,df=df)
 
 def detect_hesitancy(user_input):
     """function to detect hesitancy in user input.
@@ -78,7 +79,7 @@ def is_confidence_built(response):
 # ● You should save the user details as they are obtained and not wait till all the details are
 # received.
 # 9. Create a CSV file using libraries like pandas in Python.
-def extract_information(user_input,key):
+def extract_information(user_input,key,df):
     """
     function to Extract structered information using Extarction agent and saved it..
     """
@@ -90,8 +91,11 @@ def extract_information(user_input,key):
     df[key]=ex_out['output']
     print("key",key)
     print(df.head())
+    with open('user_data.csv', 'a', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(ex_out['output'])
     print(ex_out['output'])
-    df.to_csv('user_data.csv',index=False)
+    # df.to_csv('user_data.csv',index=False)
 
 def continue_small_talk(user_input):
     """
@@ -121,20 +125,38 @@ def got_confidence(key):
     return res["output"]
   
 #Running InitiationAgent for initiating conversation
-print("calling initiater")
-response=agent_ini.invoke({"input":input1,"chat_history": chat_history })
-chat_history.extend([HumanMessage(content=input1),AIMessage(content=response["output"]),])
-print("Going forward.....")
-print(response)  
+# response=agent_ini.invoke({"input":input1,"chat_history": chat_history })
+# chat_history.extend([HumanMessage(content=input1),AIMessage(content=response["output"]),])
+# print("Going forward.....")
+# print(response)
+def welcome_ini(agent=agent_ini,chat_history=chat_history):
+    """write welcome message by Initiator agent
+
+    Args:
+        agent (_type_, optional):Agent. Defaults to agent_ini.
+        chat_history (_type_, optional):variable for storing chat_history collaboratively. Defaults to chat_history.
+
+    Returns:
+        _type_: str
+    """
+    print("calling initiater")
+    response=agent_ini.invoke({"input":input1,"chat_history": chat_history })
+    chat_history.extend([HumanMessage(content=input1),AIMessage(content=response["output"]),])
+    print("Going forward.....")
+    print(response)
+    return response["output"]
+    
+    
 #_______________________________________________________________________________________________________________________
 #App Logic,url managemnet,client server mmanagment
 @app.route('/', methods=['GET'])
 def home():
-    return render_template('app.html', model_output=response['output'])
+    response=welcome_ini()
+    return render_template('app.html', model_output=response)
 
 i=0
 @app.route('/Form', methods=['GET', 'POST'])
-def FormlessAI(i=i):
+def FormlessAI(i=i,df=df):
     # Initialize variables
     conf = True
     key = columns[i]
@@ -153,10 +175,12 @@ def FormlessAI(i=i):
         print(user_input)
         
         # Analyze user input and obtain the result
-        resa = analze_user_input(user_input=user_input, key=key)
+        resa=None
+        if conf!=False:
+            resa = analze_user_input(user_input=user_input, key=key,df=df)
         time.sleep(25)
         
-        # Check if the result is not None
+        # Check if the resa is not None(means hesitating,else agent is able to extract information)
         if resa is not None:
             conf = False
             # Render the template with the model output
