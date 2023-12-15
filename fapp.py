@@ -54,8 +54,10 @@ def analze_user_input(user_input,key,df):
 def detect_hesitancy(user_input):
     """function to detect hesitancy in user input.
     """
-    hesitancy_keywords = ["not sure", "maybe", "I don't know", "hesitant","why","who",'dont']
-    return any(keyword in user_input.lower() for keyword in hesitancy_keywords)
+    print("Checking User hesitency.")
+    hesitancy_keywords = ["not sure", "maybe", "I don't know", "hesitant","why","who",'dont','no','not',
+                          "don't","can u","can","help"]
+    return any(keyword in user_input.lower().split() for keyword in hesitancy_keywords)
 
 def initiate_small_talk():
     """function to initiate small talk usin Convincing Agent.
@@ -85,11 +87,12 @@ def extract_information(user_input,key,df):
     """
     # Call the function from your original implementation
     print("Extracting.......(Extraction Agent)")
-    input=f"""please Extract {key} from  this text description {user_input} in json format like'key:value' 
-    some description can be small you have to use your power to understand like name,address,degree,skills can be in one words."""
+    input=f"""please Extract {key} information from text description ,{user_input} in json format like'key:value' 
+    some description can be small you have to use your power to understand like name,address,degree,skills can be in one words.
+    dont be hurry to return sorry,apology to find information."""
     ex_out=agent_ex.invoke({'input':input,'chat_history':chat_history})
     chat_history.extend([HumanMessage(content=user_input),AIMessage(content=ex_out["output"]),])
-    if 'orry' in ex_out["output"] or 'polig' in ex_out["output"]:
+    if 'orry' in ex_out["output"] or 'Apoligy' in ex_out["output"]:
         print(ex_out['output'])
     else:
         df[key]=ex_out['output']
@@ -240,4 +243,4 @@ def FormlessAI(df=df):
 
 print(df.head())
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

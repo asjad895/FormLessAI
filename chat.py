@@ -33,8 +33,18 @@ def list_personal_info(key):
 @tool
 def ini():
     """useful when you have to initiate conversation in a professional way dont use any other tools"""
-# Custom tool for handlng information asking   
-tools = [list_personal_info,ini]
+    
+@tool
+def conv():
+    """useful when you have to convince agent to give information by your expertise.
+    you can chat him to any topic that makes user happy to chat."""
+# Custom tool for handlng information asking  
+
+@tool
+def extract():
+    """useful when you have to extract information from text description.
+    look in description to extraxt asked key.""" 
+tools = [list_personal_info,ini,conv,extract]
 #Adding memory for remembering previous conversation so that it will be in loop
 #until we got full information
 MEMORY_KEY = "chat_history"
@@ -64,7 +74,7 @@ agenti = (
         ),
         "chat_history": lambda x: x["chat_history"],
     }
-    | prompt_ini| ini_with_tools| OpenAIFunctionsAgentOutputParser()
+    | prompt_ini| ini_with_tools| OpenAIFunctionsAgentOutputParser() # type: ignore
 )
 agent_ini = AgentExecutor(agent=agenti, tools=tools, verbose=True) # type: ignore
 #_____________________________________________________________________________________________________________________________________
