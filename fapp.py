@@ -85,17 +85,21 @@ def extract_information(user_input,key,df):
     """
     # Call the function from your original implementation
     print("Extracting.......")
-    input=f"Extract {key} as strucured information form {user_input}"
+    input=f"""please Extract {key} from  this text description {user_input} in json format like'key:value' 
+    some description can be small you have to use your power to understand like name,address,degree,skills can be in one words."""
     ex_out=agent_ex.invoke({'input':input,'chat_history':chat_history})
     chat_history.extend([HumanMessage(content=user_input),AIMessage(content=ex_out["output"]),])
-    df[key]=ex_out['output']
-    print("key",key)
-    print(df.head())
-    with open('user_data.csv', 'a', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(ex_out['output'])
-    print(ex_out['output'])
-    # df.to_csv('user_data.csv',index=False)
+    if 'orry' in ex_out["output"]:
+        print(ex_out['output'])
+    else:
+        df[key]=ex_out['output']
+        print("key",key)
+        print(df.head())
+        with open('user_data.csv', 'a', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(ex_out['output'])
+            print(ex_out['output'])
+            # df.to_csv('user_data.csv',index=False)
 
 def continue_small_talk(user_input):
     """
@@ -119,7 +123,8 @@ def got_confidence(key):
     """
     print("got_confidence.......")
     input_prompt=f"""Ask information about {key} to give which is not yet obtained.dont assume anything ,here 
-    {key} yet not  recived u have to ask to user by your expertises to give this."""
+    {key} yet not  recived u have to ask to user by your expertises to give this.
+    Dont repeat same question."""
     res=agent_taker.invoke({"input": input_prompt,"chat_history":chat_history})
     chat_history.extend([HumanMessage(content=input_prompt),AIMessage(content=res["output"]),])
     return res["output"]
@@ -155,12 +160,14 @@ def home():
     return render_template('app.html', model_output=response)
 
 i=0
+conf=True
 @app.route('/Form', methods=['GET', 'POST'])
-def FormlessAI(i=i,df=df):
+def FormlessAI(df=df):
     # Initialize variables
-    conf = True
+    global i
     key = columns[i]
-    input_prompt = f"Ask information about {key} which is not yet obtained,in your expertise"
+    global conf 
+    input_prompt = f"please Ask information about {key} which is not yet obtained,in your expertise"
     
     # Invoke the agent_taker to get a response
     res1 = agent_taker.invoke({"input": input_prompt, "chat_history": chat_history})
@@ -177,6 +184,7 @@ def FormlessAI(i=i,df=df):
         # Analyze user input and obtain the result
         resa=None
         if conf!=False:
+            print("not going for analyzing,user not in confidence just chatting")
             resa = analze_user_input(user_input=user_input, key=key,df=df)
         time.sleep(25)
         
@@ -203,6 +211,7 @@ def FormlessAI(i=i,df=df):
         else:
             # Increment index i to move to the next key/column
             i = i + 1
+            print("iteration ",i)
             
             # Check if i is within boundss
             if i <= 5:
