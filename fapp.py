@@ -84,12 +84,12 @@ def extract_information(user_input,key,df):
     function to Extract structered information using Extarction agent and saved it..
     """
     # Call the function from your original implementation
-    print("Extracting.......")
+    print("Extracting.......(Extraction Agent)")
     input=f"""please Extract {key} from  this text description {user_input} in json format like'key:value' 
     some description can be small you have to use your power to understand like name,address,degree,skills can be in one words."""
     ex_out=agent_ex.invoke({'input':input,'chat_history':chat_history})
     chat_history.extend([HumanMessage(content=user_input),AIMessage(content=ex_out["output"]),])
-    if 'orry' in ex_out["output"]:
+    if 'orry' in ex_out["output"] or 'polig' in ex_out["output"]:
         print(ex_out['output'])
     else:
         df[key]=ex_out['output']
@@ -108,6 +108,7 @@ def continue_small_talk(user_input):
     # follow-up small talk response
     #Continue discussing topics related to the user's interests
     user_input = user_input
+    print("not going for analyzing,user not in confidence just chatting(Convincing Agent)")
     conv_output = agent_conv.invoke({"input": user_input, "chat_history": chat_history})
     chat_history.extend([HumanMessage(content=user_input),AIMessage(content=conv_output["output"]),])
     return conv_output['output']
@@ -121,7 +122,7 @@ def got_confidence(key):
     Returns:
         _AIMessage_: _Agent response_
     """
-    print("got_confidence.......")
+    print("got_confidence.......(Taker Agent)")
     input_prompt=f"""Ask information about {key} to give which is not yet obtained.dont assume anything ,here 
     {key} yet not  recived u have to ask to user by your expertises to give this.
     Dont repeat same question."""
@@ -144,7 +145,7 @@ def welcome_ini(agent=agent_ini,chat_history=chat_history):
     Returns:
         _type_: str
     """
-    print("calling initiater")
+    print("calling initiater(Initialization Agent)")
     response=agent_ini.invoke({"input":input1,"chat_history": chat_history })
     chat_history.extend([HumanMessage(content=input1),AIMessage(content=response["output"]),])
     print("Going forward.....")
@@ -184,7 +185,6 @@ def FormlessAI(df=df):
         # Analyze user input and obtain the result
         resa=None
         if conf!=False:
-            print("not going for analyzing,user not in confidence just chatting")
             resa = analze_user_input(user_input=user_input, key=key,df=df)
         time.sleep(25)
         

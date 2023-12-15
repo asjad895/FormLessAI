@@ -88,3 +88,34 @@ you can see what convincing agent send as response when hesitating at 1st initia
 
 we can see when user giving out of context input like(abuse,adultry,anything simialr)
 ![Agent analysis of out of context input and response](./webpage_result/2nd_q.png)
+
+
+## Chat flow
+Notes:in ```green``` color text is the output return by agents.that we are serving in page for user conversation.
+
+when user gives response in web page i am printing it in terminal after that u can see.
+
+here i did not added welcome message  but it always start from welocme message (```check on top of this page```)
+
+the texts which are in list is the chat history common for all the agents(```langchain Memory```)
+
+1st question-answer(client server):DOB
+![1st_quest](./webpage_result/1st_q_f.png)
+2nd question-answer(client server):name
+![2nd_quest](./webpage_result/2nd_q_f.png)
+3rd question-answer(client server):Email
+![Agent analysis](./webpage_result/3rd_q.png)
+4th question-answer(client server) :Mob No
+![Agent analysis ](./webpage_result/4_q.png)
+4th question-answer(client server)
+![Agent analysis](./webpage_result/4_q_1.png)
+5th question-answer(client server) :batchlors degree
+![Agent analysis](./webpage_result/5_q.png)
+5th question-answer(client server)
+![Agent analysis ](./webpage_result/5_q_1.png)
+6th question-answer(client server) :skills
+![Agent analysis ](./webpage_result/6_q.png)
+6th question-answer(client server)
+![Agent analysis ](./webpage_result/6_q_1.png)
+Thanks message from Taker Agent to the user.
+![Agent analysis ](./webpage_result/final_thanks.png)
