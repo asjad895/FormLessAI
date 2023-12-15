@@ -76,3 +76,15 @@ once verified we will get second question asked by user in web page.
 ![2nd question after verification and extraction](./webpage_result/2nd_q.png)
 
 ## Testing Out of context response,hesitation by user
+
+when we are giving input as why(any sentence which have 'why' indicates hesitatng between conversation of taking information)
+![User hesitating model response when asking personal information](./webpage_result/hesitating_why.png)
+
+you can look into terminal for seeing flow in backend(left side).
+
+you can see what convincing agent send as response when hesitating at 1st initiation of conversation to get user confidence  on web pages (right side)
+
+### Out of context:
+
+we can see when user giving out of context input like(abuse,adultry,anything simialr)
+![Agent analysis of out of context input and response](./webpage_result/2nd_q.png)
