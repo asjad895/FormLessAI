@@ -101,7 +101,9 @@ def extract_information(user_input,key,df):
         print(df.head())
         with open('user_data.csv', 'a', newline='') as f:
             writer = csv.writer(f)
-            writer.writerow(ex_out['output'])
+            writer.writerow(ex_out['output'].keys())
+            writer.writerow(ex_out['output'].values())
+            writer.writerow("------------------------------")
             print(ex_out['output'])
             print("Saved.")
             # df.to_csv('user_data.csv',index=False)
