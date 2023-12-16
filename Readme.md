@@ -119,3 +119,8 @@ the texts which are in list is the chat history common for all the agents(```lan
 ![Agent analysis ](./webpage_result/6_q_1.png)
 Thanks message from Taker Agent to the user.
 ![Agent analysis ](./webpage_result/final_thanks.png)
+
+
+### Result Extracted Data:
+
+All the extracted data has been saved in ```user_data.csv``` file.
