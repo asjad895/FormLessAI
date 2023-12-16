@@ -177,19 +177,15 @@ def FormlessAI(df=df):
     key = columns[i]
     global conf 
     input_prompt = f"please Ask information about {key} which is not yet obtained,in your expertise"
-    
     # Invoke the agent_taker to get a response
     res1 = agent_taker.invoke({"input": input_prompt, "chat_history": chat_history})
-    
     # Update chat history with user and AI messages
     chat_history.extend([HumanMessage(content=input_prompt), AIMessage(content=res1["output"]),])
-    
     # Check if the request method is POST
     if request.method == 'POST':
         # Get user input from the form
         user_input = request.form['user_input']
         print(user_input)
-        
         # Analyze user input and obtain the result
         resa=None
         if conf!=False:
@@ -220,7 +216,6 @@ def FormlessAI(df=df):
             # Increment index i to move to the next key/column
             i = i + 1
             print("iteration ",i)
-            
             # Check if all information asked correctly
             if i <= 5:
                 key = columns[i]
@@ -228,6 +223,7 @@ def FormlessAI(df=df):
                 key = 'Thanks message for giving all information.'
                 df.to_csv(csv_file_path, index=False)
                 print(df.head())
+                time.sleep(20)
                 input_prompt = f"""Ask information about {key} to give which is not yet obtained. Don't assume anything. Here, {key}
                 has not been received; you have to ask the user by your expertise to provide this."""
                 # Invoke the agent_taker to get a response for the new prompt
@@ -237,21 +233,18 @@ def FormlessAI(df=df):
                 return render_template('thanks.html',model_output=res['output'])
             
             time.sleep(20)
-            
             # Generate a new input prompt for the next key
-            input_prompt = f"""Ask information about {key} to give which is not yet obtained. Don't assume anything. Here, {key} has not been received; you have to ask the user by your expertise to provide this."""
-            
+            input_prompt = f"""Ask information about {key} to give which is not yet obtained. Don't assume anything. Here, {key} has not been received; you have to ask the 
+            user by your expertise to provide this."""
             # Invoke the agent_taker to get a response for the new prompt
             res = agent_taker.invoke({"input": input_prompt, "chat_history": chat_history})
-            
             # Update chat history with new user and AI messages
             chat_history.extend([HumanMessage(content=input_prompt), AIMessage(content=res["output"]),])
-            
             print(res)
-            # Render the template with the model output
+            # Render the template with the model output for asking information
             return render_template('form.html', model_output=res['output'])
     
-    # Render the template with the model output
+    # Render the template with the welcome  model output
     return render_template('form.html', model_output=res1['output'])
 
 print(df.head())
