@@ -221,13 +221,20 @@ def FormlessAI(df=df):
             i = i + 1
             print("iteration ",i)
             
-            # Check if i is within boundss
+            # Check if all information asked correctly
             if i <= 5:
                 key = columns[i]
             else:
                 key = 'Thanks message for giving all information.'
                 df.to_csv(csv_file_path, index=False)
                 print(df.head())
+                input_prompt = f"""Ask information about {key} to give which is not yet obtained. Don't assume anything. Here, {key}
+                has not been received; you have to ask the user by your expertise to provide this."""
+                # Invoke the agent_taker to get a response for the new prompt
+                res = agent_taker.invoke({"input": input_prompt, "chat_history": chat_history})
+                # Update chat history with new user and AI messages
+                chat_history.extend([HumanMessage(content=input_prompt), AIMessage(content=res["output"]),])
+                return render_template('thanks.html',model_output=res['output'])
             
             time.sleep(20)
             
