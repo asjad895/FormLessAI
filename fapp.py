@@ -227,6 +227,7 @@ def FormlessAI(df=df):
             else:
                 key = 'Thanks message for giving all information.'
                 df.to_csv(csv_file_path, index=False)
+                print(df.head())
             
             time.sleep(20)
             
