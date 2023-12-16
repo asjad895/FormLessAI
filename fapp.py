@@ -87,10 +87,11 @@ def extract_information(user_input,key,df):
     """
     # Call the function from your original implementation
     print("Extracting.......(Extraction Agent)")
-    input=f"""please Extract {key} information from text description ,{user_input} in json format like'key:value' 
-    some description can be small you have to use your power to understand like name,address,degree,skills can be in one words.
-    dont be hurry to return sorry,apology to find information."""
-    ex_out=agent_ex.invoke({'input':input,'chat_history':chat_history})
+    inputs=f"{user_input}"+f"is my {key}"
+    input_text = f"""Please extract {key} information from the user input description: {inputs}.
+    Take your time and ensure accuracy. If the information is not found, politely apologize for any inconvenience.
+    """
+    ex_out=agent_ex.invoke({'input':input_text,'chat_history':chat_history})
     chat_history.extend([HumanMessage(content=user_input),AIMessage(content=ex_out["output"]),])
     if 'orry' in ex_out["output"] or 'Apoligy' in ex_out["output"]:
         print(ex_out['output'])
@@ -102,6 +103,7 @@ def extract_information(user_input,key,df):
             writer = csv.writer(f)
             writer.writerow(ex_out['output'])
             print(ex_out['output'])
+            print("Saved.")
             # df.to_csv('user_data.csv',index=False)
 
 def continue_small_talk(user_input):

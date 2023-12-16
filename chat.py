@@ -1,3 +1,4 @@
+from xml.dom.xmlbuilder import DOMBuilder
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts.chat import (
     ChatPromptTemplate,
@@ -26,7 +27,7 @@ llm = ChatOpenAI(api_key=OPENAI_API_KEY, temperature=0.7,model="gpt-3.5-turbo-11
 #Agent Information Taker
 #tool for tracking asked information step 4. Details to extract: Name, email, phone no, Address, Date of birth, Education.
 @tool
-def list_personal_info(key):
+def list_personal_info():
     """useful when u have to ask user to give information .Asks the user for personal information .you will get {key} as prameter.
     this {key} will be a required variable.
     you have ask user to give this {key} personal information according to your expertise as an assitant."""
@@ -42,9 +43,9 @@ def conv():
 
 @tool
 def extract():
-    """useful when you have to extract information from text description.
-    look in description to extraxt asked key.""" 
-tools = [list_personal_info,ini,conv,extract]
+    """useful when you have to extract {"key"} information from {"text description"}".
+    look in description to extraxt asked {"key"}.""" 
+tools = [list_personal_info,ini,conv]
 #Adding memory for remembering previous conversation so that it will be in loop
 #until we got full information
 MEMORY_KEY = "chat_history"
@@ -85,7 +86,7 @@ prompt_taker = ChatPromptTemplate.from_messages(
         (
             "system","""You are very powerful assistant, but you always have to check which information you have to ask each time.
             Ask in professionally by convincing him how can this will help him to personalize servives.
-            Ask in some time funny way/creative way because you are powerful.
+            Ask in some time funny way/creative way because you are powerful(add some emojior wish joke related to key).
             dont ask in more than 3 lines.
             Now u have memory of previous chat if user already given any information thanks them for giving in your next question. 
             Be mindful not to repeat questions, stay on topic, and guide the user smoothly through the interaction. 
@@ -128,13 +129,15 @@ extraction_agent_template=ChatPromptTemplate.from_messages(
         (
             "system","""You are very powerful assistant,Who will help in extracting structered information from user input.
             please remember you are powerful the information can be in any format.you have to read carefylly
-            and extract asked information.
-            please dont check always same information.focus on key u will get from user_input and extract it can be anything from 
-            thism['DOB','Name','Email','Mob No',"Batchler's degree",'Skills']
-            If you are not able to get any information then dont do nything just return information is not correct.
+            and extract asked information.please dont check always same information.focus on key u will get from user_input and extract.
+            it can be anything from this['DOB','Name','Email','Mob No',"Batchler's degree",'Skills','address'].
             if input is out of context in your response you must add  sorry word.
-            if asked key is in input must return only structred information.
-            """,
+            User Input: Extract key from user_input
+            Instructions to you:
+            1. The user has provided a key indicating the type of information they want to extract from the description.
+            2. Focus solely on extracting the information associated with the provided key from the user's description.
+            3. Present the extracted information in JSON format using the provided key.
+            4.You will get only one variable at once"""
         ),
         MessagesPlaceholder(variable_name=MEMORY_KEY),
         ("user", "{input}"),
@@ -155,8 +158,11 @@ extraction_agent = (
 agent_ex = AgentExecutor(agent=extraction_agent, tools=tools, verbose=True) # type: ignore
 
 # Usage
-user_input = "who are u"
-# extraction_output = agent.invoke({"input": user_input, "chat_history": chat_history})
+# key="degree"
+# user_input="cse"+f"is my {key}"
+# input_text = f"""Please extract {key} information from the user input description: {user_input}.
+# Take your time and ensure accuracy. If the information is not found, politely apologize for any inconvenience."""
+# extraction_output = agent_ex.invoke({"input": input_text, "chat_history": chat_history})
 # chat_history.extend(extraction_output["output"])
 # print(">>>>>.",extraction_output)
 #________________________________________________________________________________________________________________
