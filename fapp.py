@@ -101,10 +101,11 @@ def extract_information(user_input,key,df):
         print(df.head())
         with open('user_data.csv', 'a', newline='') as f:
             writer = csv.writer(f)
-            writer.writerow(ex_out['output'].keys())
-            writer.writerow(ex_out['output'].values())
+            output_dict = json.loads(ex_out['output'])
+            writer.writerow(output_dict.keys())
+            writer.writerow(output_dict.values())
             writer.writerow("------------------------------")
-            print(ex_out['output'])
+            print(output_dict)
             print("Saved.")
             # df.to_csv('user_data.csv',index=False)
 
